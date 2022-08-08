@@ -8,17 +8,17 @@
   </head>
   <body>
     <script>
-      function loadScript(src) {
+      function loadScript(src, cb) {
         const script = document.createElement("script");
         script.src = src;
+
+        // As soon as this script loaded browser needs to process this callback
+        script.onload = () => cb();
 
         document.head.append(script);
       }
 
-      loadScript("/src/index.js");
-
-      // Since script is loaded async, our browser doesn't wait for this script will be loaded
-      newFunction(); // this function is declared in the src/index.js
+      loadScript("/src/index.js", () => newFunction());
     </script>
   </body>
 </html>
