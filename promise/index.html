@@ -12,37 +12,68 @@
         const script = document.createElement("script");
         script.src = src;
 
-        // As soon as this script loaded browser needs to process this callback
-        script.onload = () => cb(script);
+        // Используем один колбэк для разных способов с зарезервированным первым аргументом под ошибку
+        script.onload = () => cb(null, script);
+
+        // Когда ошибка происходит, то событие срабатывает и мы просто передаем в колбэк ошибку и обрабатываем ее в колбэке
         script.onerror = () =>
-          cb(new Error(`The loading script ${script.src} failaure`));
+          cb(new Error(`The loading script ${script.src} failed`));
 
         document.head.append(script);
       }
 
-      // Если мы хотим сделать, чтобы скрипты загружались один за другим, то нужно вызывать второй loadScript() внутри колбэка первого loadScript
+      // Это адская пирамида колбэков только для 5 загружаемых скриптов
+      //   Если их будет больше, то это трудно поддерживать
       loadScript(
         "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js",
-        (script) => {
-          console.log(`cool a new ${script.src} loaded`);
-          loadScript("/src/index.js", (script) => {
-            console.log(`cool a new ${script.src} loaded`);
-            loadScript("/src/index.js", (script) => {
-              console.log(`cool a new ${script.src} loaded`);
-              loadScript("/src/index.js", (script) => {
-                console.log(`cool a new ${script.src} loaded`);
-                loadScript("/src/index.js", (script) => {
-                  console.log(`cool a new ${script.src} loaded`);
-                  loadScript("/src/index.js", (script) => {
-                    console.log(`cool a new ${script.src} loaded`);
-                    loadScript("/src/index.js", (script) => {
-                      console.log(`cool a new ${script.src} loaded`);
-                    });
-                  });
-                });
-              });
-            });
-          });
+        (error, script) => {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log(`Congrats ${script.src} loaded!`);
+            loadScript(
+              "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js",
+              (error, script) => {
+                if (error) {
+                  console.log(error);
+                } else {
+                  console.log(`Congrats ${script.src} loaded!`);
+                  loadScript(
+                    "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js",
+                    (error, script) => {
+                      if (error) {
+                        console.log(error);
+                      } else {
+                        console.log(`Congrats ${script.src} loaded!`);
+                        loadScript(
+                          "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js",
+                          (error, script) => {
+                            if (error) {
+                              console.log(error);
+                            } else {
+                              console.log(`Congrats ${script.src} loaded!`);
+                              loadScript(
+                                "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js",
+                                (error, script) => {
+                                  if (error) {
+                                    console.log(error);
+                                  } else {
+                                    console.log(
+                                      `Congrats ${script.src} loaded!`
+                                    );
+                                  }
+                                }
+                              );
+                            }
+                          }
+                        );
+                      }
+                    }
+                  );
+                }
+              }
+            );
+          }
         }
       );
     </script>
