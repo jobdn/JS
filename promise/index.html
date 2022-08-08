@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Promise, async/await</title>
+  </head>
+  <body>
+    <script>
+      function loadScript(src) {
+        const script = document.createElement("script");
+        script.src = src;
+
+        document.head.append(script);
+      }
+
+      loadScript("/src/index.js");
+
+      // Since script is loaded async, our browser doesn't wait for this script will be loaded
+      newFunction(); // this function is declared in the src/index.js
+    </script>
+  </body>
+</html>
