@@ -19,7 +19,7 @@
         script.onerror = () =>
           cb(new Error(`The loading script ${script.src} failed`));
 
-        document.head.append(script);
+        document.body.append(script);
       }
 
       // Это адская пирамида колбэков только для 5 загружаемых скриптов
@@ -76,6 +76,41 @@
           }
         }
       );
+
+      // Create step* funcitons to avoid callback hell
+      function step1(error, script) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log(`cool a new ${script.src} loaded`);
+          loadScript("src/index.js", step2);
+        }
+      }
+      function step2(error, script) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log(`cool a new ${script.src} loaded`);
+          loadScript("src/index.js", step3);
+        }
+      }
+      function step3(error, script) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log(`cool a new ${script.src} loaded`);
+          loadScript("src/index.js", step4);
+        }
+      }
+
+      function step4(error, script) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log(`cool a new ${script.src} loaded`);
+        }
+      }
+      // .....
     </script>
   </body>
 </html>
