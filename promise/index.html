@@ -26,55 +26,7 @@
       //   Если их будет больше, то это трудно поддерживать
       loadScript(
         "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js",
-        (error, script) => {
-          if (error) {
-            console.log(error);
-          } else {
-            console.log(`Congrats ${script.src} loaded!`);
-            loadScript(
-              "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js",
-              (error, script) => {
-                if (error) {
-                  console.log(error);
-                } else {
-                  console.log(`Congrats ${script.src} loaded!`);
-                  loadScript(
-                    "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js",
-                    (error, script) => {
-                      if (error) {
-                        console.log(error);
-                      } else {
-                        console.log(`Congrats ${script.src} loaded!`);
-                        loadScript(
-                          "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js",
-                          (error, script) => {
-                            if (error) {
-                              console.log(error);
-                            } else {
-                              console.log(`Congrats ${script.src} loaded!`);
-                              loadScript(
-                                "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js",
-                                (error, script) => {
-                                  if (error) {
-                                    console.log(error);
-                                  } else {
-                                    console.log(
-                                      `Congrats ${script.src} loaded!`
-                                    );
-                                  }
-                                }
-                              );
-                            }
-                          }
-                        );
-                      }
-                    }
-                  );
-                }
-              }
-            );
-          }
-        }
+        step1
       );
 
       // Create step* funcitons to avoid callback hell
@@ -111,6 +63,14 @@
         }
       }
       // ...... to show that we can create step* funciton to infinity
+
+      // Итог: Чтобы выполнять асинхронные операции последовательно можно использовать колбэки.
+
+      /* С помощью них можно решать определенные задачи: подождать пока выполниться асинхронная операция и после выполнять уже синхронные; сделать выполнение асинхронных действий последовательными, если внутри колбэка делать следующую асинхронную операцию и так делать цепочки.
+       */
+
+      /* Трудности: трудно поддерживать, если нужно выполнить много асинхронных операции; может возникнуть адская пирамида колбэков.
+       */
     </script>
   </body>
 </html>
