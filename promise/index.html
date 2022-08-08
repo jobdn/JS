@@ -13,12 +13,23 @@
         script.src = src;
 
         // As soon as this script loaded browser needs to process this callback
-        script.onload = () => cb();
+        script.onload = () => cb(script);
+        script.onerror = () =>
+          cb(new Error(`The loading script ${script.src} failaure`));
 
         document.head.append(script);
       }
 
-      loadScript("/src/index.js", () => newFunction());
+      // Скрыпты будут загружаться асинхронно!!! Не известно какой скрипт загрузится быстрее и выполнится
+      loadScript(
+        "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js",
+        (script) => {
+          console.log(`cool a new ${script.src} loaded`);
+        }
+      );
+      loadScript("/src/index.js", (script) => {
+        console.log(`cool a new ${script.src} loaded`);
+      });
     </script>
   </body>
 </html>
