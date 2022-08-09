@@ -1,34 +1,29 @@
-function loadScript(src, cb) {
-  const script = document.createElement("script");
-  script.src = src;
+function loadScript(src) {
+  return new Promise((res, rej) => {
+    const script = document.createElement("script");
+    script.src = src;
 
-  script.onload = () => cb(null, script);
+    /**
+     * Внутри ИСПОЛНИТЕЛЯ у нас есть код, который как раз и занимает
+     * некоторое время, например, загрузку скрипта. Когда это АСИНХРОННОЕ
+     * действие завершилось мы говорим,что оно завершилось, используя res
+     * или rej, и результат этого АСИНХРОННОГО действия
+     * готов для использования.
+     */
 
-  script.onerror = () =>
-    cb(new Error(`The loading script ${script.src} failed`));
+    script.onload = () => res("Script is loadded successfully");
 
-  document.body.append(script);
+    script.onerror = () => rej(new Error("Script loading is failure"));
+
+    document.body.append(script);
+  });
 }
 
-// PROMISE
-const prom1 = new Promise((res, rej) => {
-  setTimeout(() => {
-    rej(new Error(":C"));
-  }, 1000);
-});
-
-prom1
-  .finally(() => {
-    console.log("Цепочка выполняется последовательно");
-    // finally не принимает никаких аргументов и пропускает через себя промис, который дальше используется либо в then либо в catch
-  })
+const promise = loadScript("src/test-script.js");
+promise
   .then((value) => {
+    // А вот тут мы уже используем это результат асинхронного действия.
     console.log(value);
-    console.log(
-      "Но, в зависимости от состояния промиса, срабатывает либо then либо catch"
-    );
   })
-  .catch((error) => console.log(error))
-  .finally(() => {
-    console.log("finally выполняется в любом случае");
-  });
+  // Или тут.
+  .catch(console.log);
