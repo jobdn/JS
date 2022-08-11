@@ -11,39 +11,34 @@ function loadScript(src) {
   });
 }
 
-const prom = new Promise(function (res, rej) {
-  setTimeout(() => {
-    console.log("setTimeout1");
-    res(1000);
-  }, 1000);
+loadScript("./src/one.js")
+  .then(() => {
+    return loadScript("./src/two.js");
+  })
+  .then(() => {
+    return loadScript("./src/three.js");
+  }).then(() => {
+    one("Вот тут мы уже можем вызывать функции из скриптов,");
+    two("потому что этот код выполняется последовательно");
+    three("вот эти потребители будут выполняться, когда разрешиться промис, но на первые проход скрипта");
+    three("они попадают в очередь.");
+    /**
+     * Код линейный и растет вниз. Пока нет адской пирамиды колбэков. Мы делаем цепочку промисов
+     * чтобы сделать выполнение асинхронных действий последовательно.
+     */
+  })
+  
+  console.log("Команда, которая выполняется первой!!!"); // **
+  
+loadScript("./src/one.js")
+.then(() => {
+  loadScript("./src/two.js")
+  .then(() => {
+    loadScript("./src/three.js")
+    .then(() => {
+        three("================================================");
+        one("А вот тут уже появляется адская пирамида колбэков, код растет вниз и вправо");
+        two("здесь уже не возвращается промис");
+      })
+  })
 })
-  .then(function (res1) {
-    console.log("Value in first .then: ", res1);
-    return res1 * 2;
-    /**
-     * Потребители возвращаю промис.
-     */
-  })
-  .then(function (res2) {
-    console.log("Value in second .then: ", res2);
-    return new Promise(function (res, rej) {
-      // *
-      rej(new Error(":CCCC")); // Хотя мы можем и явно вернуть промис
-
-      /**
-       * Даже промис завершенный с ошибкой
-       */
-    });
-  })
-  .then(function (res3) {
-    console.log("Value in third .then: ", res3);
-    return res3 * 2;
-  })
-  .catch(function (error) {
-    /**
-     * И на промис после строки * уже сработает этот блок!!!
-     */
-    console.log(error);
-    return "Error was"; // тут тоже возвращает промис **
-  })
-  .then(console.log); // Здесь обрабатывается промис из строки **
