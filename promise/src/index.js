@@ -11,34 +11,25 @@ function loadScript(src) {
   });
 }
 
-loadScript("./src/one.js")
-  .then(() => {
-    return loadScript("./src/two.js");
-  })
-  .then(() => {
-    return loadScript("./src/three.js");
-  }).then(() => {
-    one("Вот тут мы уже можем вызывать функции из скриптов,");
-    two("потому что этот код выполняется последовательно");
-    three("вот эти потребители будут выполняться, когда разрешиться промис, но на первые проход скрипта");
-    three("они попадают в очередь.");
+fetch("./server/users.json")
+  .then(response => {
     /**
-     * Код линейный и растет вниз. Пока нет адской пирамиды колбэков. Мы делаем цепочку промисов
-     * чтобы сделать выполнение асинхронных действий последовательно.
+     * Этот объект возвращается до того, как сервер полностью загружен.
+     * 
+     * А вот response.json() возвращает промис, который выполняется, 
+     * когда данные полностью загружены с сервера.  
      */
+    console.log("response: ", response);
+    return response.json()
   })
-  
-  console.log("Команда, которая выполняется первой!!!"); // **
-  
-loadScript("./src/one.js")
-.then(() => {
-  loadScript("./src/two.js")
-  .then(() => {
-    loadScript("./src/three.js")
-    .then(() => {
-        three("================================================");
-        one("А вот тут уже появляется адская пирамида колбэков, код растет вниз и вправо");
-        two("здесь уже не возвращается промис");
-      })
+  .then(users => users[0])
+  .then(user => fetch(`https://api.github.com/users/${user.name}`))
+  .then(gitHubResponse => gitHubResponse.json())
+  .then(gitHubUser => {
+    console.log(gitHubUser);
+    const imgEl = document.createElement("img");
+    imgEl.src = gitHubUser.avatar_url;
+    document.body.append(imgEl);
+    imgEl.style.borderRadius = "50%";
+    imgEl.style.border = "3px solid orange"
   })
-})
