@@ -11,20 +11,11 @@ function loadScript(src) {
   });
 }
 
-function loadGithubUserImage() {
-  const githubUser = prompt("Enter github user name: ", "jobdn");
+let promise = Promise.resolve();
 
-  fetch(`https://api.github.com/users/${githubUser}`)
-  .then(gitHubResponse => gitHubResponse.json())
-  .then(createAndAppendImg)
-}
+/**
+ * Колбэк внутри потребителя будет помещен в ОЧЕРЕДЬ МИКРОТАСОК и выполнен после выполнения синхронного кода.
+ */
+promise.then(() => console.log("Промис обработан"));
 
-function createAndAppendImg(gitHubUser) {
-  const imgEl = document.createElement("img");
-  imgEl.src = gitHubUser.avatar_url;
-  document.body.append(imgEl);
-  imgEl.style.borderRadius = "50%";
-  imgEl.style.border = "3px solid orange"
-}
-
-loadGithubUserImage()
+console.log("СИНХРОННЫЙ КОД ОТРАБОТАЛ");
